@@ -1,49 +1,47 @@
 <script context="module">
-	export const load = async ({ fetch }) => {
-		const res = await fetch('/posts.json');
-		if (res.ok) {
-			const posts = await res.json();
-			return {
-				props: posts
-			};
-		}
+	import ProjectCard from '$lib/components/project-card.svelte';
+	import { client } from '$lib/graphql-client';
+	import { authorsQuery, projectsQuery } from '$lib/graphql-queries';
+
+	export const load = async () => {
+		const [authorsReq, projectsReq] = await Promise.all([
+			client.request(authorsQuery),
+			client.request(projectsQuery)
+		]);
+		const { authors } = authorsReq;
+		const { projects } = projectsReq;
+		return {
+			props: {
+				authors,
+				projects
+			}
+		};
 	};
 </script>
 
 <script>
-	export let posts;
+	export let projects;
+	export let authors;
 </script>
 
 <svelte:head>
-	<title>Welcome!</title>
+	<title>My Portfolio Project</title>
 </svelte:head>
 
-<ul>
-	{#each posts as post}
-		<li class="card text-center shadow-2xl mb-20">
-			<figure class="px-10 pt-10">
-				{#if post.coverImage?.url}
-					<img class="rounded-xl" src={post.coverImage.url} alt={`Cover image for ${post.title}`} />
-				{:else}
-					<img class="rounded-xl" src={`/default-cover-image.jpg`} alt={`Default Cover Image`} />
-				{/if}
-			</figure>
-			<div class="card-body">
-				<h2 class="title font-bold text-2xl mb-2">{post.title}</h2>
-				<p>{post.excerpt}</p>
-				<div class="flex justify-center mt-5 space-x-2 mb-3">
-					{#if post.tags}
-						{#each post.tags as tag}
-							<span class="badge badge-primary space-x-1 mr-2">{tag}</span>
-						{/each}
-					{/if}
-				</div>
-				<div class="flex justify-center card-actions">
-					<a sveltekit:prefetch class="btn btn-outline btn-primary" href={`/posts/${post.slug}`}
-						>Read &rArr;</a
-					>
-				</div>
-			</div>
-		</li>
+{#each authors as author}
+	<div class="flex mb-40 items-end">
+		<div class="mr-6">
+			<h2 class="text-3xl mb-4 font-bold tracking-wider">
+				{author.name}
+			</h2>
+			<p class="text-xl mb-4">{author.intro}</p>
+		</div>
+		<img class="mask mask-squircle h-48" src={author.picture.url} alt={author.name} />
+	</div>
+{/each}
+
+<div class="grid gap-10 md:grid-cols-4 md:px-10 lg:grid-cols-6 lg:-mx-52">
+	{#each projects as { name, description, image, slug }}
+		<ProjectCard {name} {description} url={image[0].url} {slug} />
 	{/each}
-</ul>
+</div>

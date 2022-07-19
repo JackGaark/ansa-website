@@ -1,8 +1,8 @@
 import { client } from '$lib/graphql-client';
 import { gql } from 'graphql-request';
-import { get as meatdata } from './site-metadata.json.js';
+import { GET as meatdata } from './site-metadata.json.js';
 
-export const get = async () => {
+export const GET = async () => {
 	const {
 		body: { siteUrl }
 	} = await meatdata();

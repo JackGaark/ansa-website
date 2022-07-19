@@ -1,7 +1,7 @@
 import { client } from '$lib/graphql-client';
 import { gql } from 'graphql-request';
 
-export const get = async () => {
+export const GET = async () => {
 	try {
 		const query = gql`
 			query GetProjectMetadatas {

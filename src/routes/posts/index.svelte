@@ -1,17 +1,10 @@
 <script context="module">
-	import { page } from '$app/stores';
-	import Head from '$components/head.svelte';
 	import { client } from '$lib/graphql-client';
 	import { postsQuery } from '$lib/graphql-queries';
-	import { fetchSiteMetadata, siteMetadataStore } from '$stores/site-metadata';
 	import { marked } from 'marked';
-	import { onMount } from 'svelte';
 
 	export const load = async () => {
-		await fetchSiteMetadata();
-
 		const { posts } = await client.request(postsQuery);
-
 		return {
 			props: {
 				posts
@@ -22,39 +15,29 @@
 
 <script>
 	export let posts;
-	let pathname;
-
-	onMount(async () => {
-		pathname = $page.url.pathname;
-	});
-
-	const { siteUrl, name: siteName, openGraphDefaultImage } = $siteMetadataStore || [];
 </script>
 
-<Head
-	title={`Blog posts! · ${siteName}`}
-	description={`A list of recent blog posts.`}
-	image={openGraphDefaultImage.url}
-	url={`${siteUrl}${pathname}`}
-/>
+<svelte:head>
+	<title>My Portfolio | Blog</title>
+</svelte:head>
 
-<h1 class="text-4xl mb-10 font-extrabold">Blog posts</h1>
+<h1 class="text-4xl mb-10 font-extrabold">Bog posts</h1>
 
 {#each posts as { title, slug, content, coverImage, tags }}
 	<div class="card text-center shadow-2xl mb-20">
-		<figure class="">
-			<img class="" src={coverImage.url} alt={`Cover image for ${title}`} />
+		<figure>
+			<img src={coverImage.url} alt={title} />
 		</figure>
 		<div class="card-body prose">
 			<h2 class="title">{title}</h2>
 			{@html marked(content).slice(0, 150)}
-			<div class="flex justify-center mt-5 space-x-2">
+			<div class="flex justify-center mb-5 space-x-2">
 				{#each tags as tag}
-					<span class="badge badge-primary">{tag}</span>
+					<span class="badge badge-primary mr-2">{tag}</span>
 				{/each}
 			</div>
 			<div class="justify-center card-actions">
-				<a href={`/posts/${slug}`} class="btn btn-outline btn-primary">Read &rArr;</a>
+				<a class="btn btn-outline btn-primary" href={`/posts/${slug}`}>Read &rArr;</a>
 			</div>
 		</div>
 	</div>

@@ -1,19 +1,5 @@
 import { gql } from 'graphql-request';
 
-export const authorsQuery = gql`
-	query GetAuthors {
-		authors {
-			name
-			intro
-			bio
-			slug
-			picture {
-				url
-			}
-		}
-	}
-`;
-
 const PROJECT_FRAGMENT = gql`
 	fragment ProjectDetails on Project {
 		name
@@ -42,6 +28,20 @@ export const projectQuery = gql`
 	query GetProject($slug: String!) {
 		project(where: { slug: $slug }) {
 			...ProjectDetails
+		}
+	}
+`;
+
+export const authorsQuery = gql`
+	query GetAuthors {
+		authors {
+			name
+			intro
+			bio
+			slug
+			picture {
+				url
+			}
 		}
 	}
 `;
@@ -86,19 +86,6 @@ export const socialsQuery = gql`
 			twitterUrl
 			youTubeUrl
 			facebookUrl
-		}
-	}
-`;
-
-export const siteMetadataQuery = gql`
-	query GetProjectMetadatas {
-		projectMetadatas {
-			name
-			siteUrl
-			description
-			openGraphDefaultImage {
-				url(transformation: { image: { resize: { width: 1200, height: 630, fit: clip } } })
-			}
 		}
 	}
 `;
